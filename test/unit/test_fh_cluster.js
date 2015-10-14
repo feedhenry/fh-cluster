@@ -18,16 +18,18 @@ sinon.spy(cluster, 'fork');
 
 var fhcluster = proxyquire('../../lib/fh_cluster.js', { cluster: cluster });
 
+function resetCluster() {
+  cluster.isMaster = true;
+  cluster.isWorker = false;
+  cluster.on.reset();
+  cluster.fork.reset();
+}
+
 describe('fh-cluster', function() {
 
   describe('With one worker', function() {
 
-    before(function() {
-      cluster.isMaster = true;
-      cluster.isWorker = false;
-      cluster.on.reset();
-      cluster.fork.reset();
-    });
+    before(resetCluster);
 
     it('should initially be cluster master', function(done) {
       assert(cluster.isMaster);
@@ -66,12 +68,7 @@ describe('fh-cluster', function() {
 
   describe('With two workers', function() {
 
-    before(function() {
-      cluster.isMaster = true;
-      cluster.isWorker = false;
-      cluster.onExitCalled = false; // custom
-      cluster.fork.reset();
-    });
+    before(resetCluster);
 
     it('should fork two workers', function(done) {
       fhcluster(_.noop, 2);
@@ -82,15 +79,31 @@ describe('fh-cluster', function() {
 
   describe('Not passing optional parameter for number of workers', function() {
 
-    before(function() {
-      cluster.isMaster = true;
-      cluster.isWorker = false;
-      cluster.onExitCalled = false; // custom
-      cluster.fork.reset();
-    });
+    before(resetCluster);
 
     it('should fork once for each cpu core', function(done) {
       fhcluster(_.noop);
+      sinon.assert.callCount(cluster.fork, os.cpus().length);
+      done();
+    });
+  });
+
+  describe('With number of workers that is NaN', function() {
+
+    before(resetCluster);
+
+    it('should fork once for each cpu core', function(done) {
+      fhcluster(_.noop, 'eleventy');
+      sinon.assert.callCount(cluster.fork, os.cpus().length);
+      done();
+    });
+  });
+
+  describe('With number of workers that is less than one', function() {
+    before(resetCluster);
+
+    it('should fork once for each cpu core', function(done) {
+      fhcluster(_.noop, -4);
       sinon.assert.callCount(cluster.fork, os.cpus().length);
       done();
     });
