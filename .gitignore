@@ -3,3 +3,4 @@ plato/
 coverage/
 dist/
 output/
+cov-*
