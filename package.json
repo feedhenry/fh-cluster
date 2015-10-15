@@ -1,0 +1,31 @@
+{
+  "name": "fh-cluster",
+  "version": "0.1.0",
+  "description": "Wraps node cluster module to allow cleaner usage",
+  "main": "lib/fh_cluster.js",
+  "scripts": {
+    "test": "grunt fh:test"
+  },
+  "homepage": "https://github.com/feedhenry/fh-cluster",
+  "author": "Red Hat",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/feedhenry/fh-cluster.git"
+  },
+  "bugs": {
+    "url": "https://github.com/feedhenry/fh-cluster/issues"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-fh-build": "^0.3.0",
+    "istanbul": "^0.3.22",
+    "mocha": "^2.3.3",
+    "proxyquire": "^1.7.3",
+    "sinon": "^1.17.1"
+  },
+  "dependencies": {
+    "backoff": "2.4.1",
+    "lodash": "3.10.1"
+  }
+}
