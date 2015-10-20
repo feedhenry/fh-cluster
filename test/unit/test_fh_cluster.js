@@ -58,8 +58,8 @@ describe('fh-cluster', function() {
       done();
     });
 
-    it('should have set a handler for cluster exit event', function(done) {
-      sinon.assert.calledWith(cluster.on, sinon.match('exit'));
+    it('should have set a handler for cluster disconnect event', function(done) {
+      sinon.assert.calledWith(cluster.on, sinon.match('disconnect'));
       done();
     });
 
