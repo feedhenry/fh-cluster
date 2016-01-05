@@ -17,13 +17,13 @@
     "url": "https://github.com/feedhenry/fh-cluster/issues"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
-    "grunt": "^0.4.5",
-    "grunt-fh-build": "^0.3.0",
-    "istanbul": "^0.3.22",
-    "mocha": "^2.3.3",
-    "proxyquire": "^1.7.3",
-    "sinon": "^1.17.2"
+    "chai": "3.4.1",
+    "grunt": "0.4.5",
+    "grunt-fh-build": "0.3.4",
+    "istanbul": "0.3.22",
+    "mocha": "2.3.3",
+    "proxyquire": "1.7.3",
+    "sinon": "1.17.2"
   },
   "dependencies": {
     "backoff": "2.4.1",
