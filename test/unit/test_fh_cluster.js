@@ -18,6 +18,7 @@ var _ = require('lodash');
 var os = require('os');
 var proxyquire = require('proxyquire');
 var sinon = require('sinon');
+var chai = require("chai");
 
 var cluster = {
   isMaster: true,
@@ -25,9 +26,14 @@ var cluster = {
   fork: function() {
     this.isMaster = false;
     this.isWorker = true;
+    return this;
   },
-  on: _.noop
+  on: _.noop,
+  worker: {
+    on: _.noop
+  }
 };
+
 sinon.spy(cluster, 'on');
 sinon.spy(cluster, 'fork');
 
@@ -58,8 +64,8 @@ describe('fh-cluster', function() {
       done();
     });
 
-    it('should have set a handler for cluster disconnect event', function(done) {
-      sinon.assert.calledWith(cluster.on, sinon.match('disconnect'));
+    it('should have set a handler for cluster exit event', function(done) {
+      sinon.assert.calledWith(cluster.on, sinon.match('exit'));
       done();
     });
 
@@ -120,6 +126,93 @@ describe('fh-cluster', function() {
     it('should fork once for each cpu core', function(done) {
       fhcluster(_.noop, -4);
       sinon.assert.callCount(cluster.fork, os.cpus().length);
+      done();
+    });
+  });
+
+  describe('Bound Cluster Tasks', function(){
+
+    beforeEach(resetCluster);
+
+    it('Assigning A Single Task No Preferred Worker', function(done){
+
+      var mockBoundWorkerFunction = sinon.spy();
+      var mockWorkerFunction = sinon.spy();
+      var testBoundWorker = {
+        startEventId: 'someeventid',
+        workerFunction: mockBoundWorkerFunction
+      };
+
+      chai.expect(function(){
+        fhcluster(mockWorkerFunction, 2, [testBoundWorker]);
+      }).to.throw(/preferredWorkerId/);
+
+      done();
+    });
+
+    it('Assigning A Single Task Worker Not Number', function(done){
+
+      var mockBoundWorkerFunction = sinon.spy();
+      var mockWorkerFunction = sinon.spy();
+      var testBoundWorker = {
+        startEventId: 'someeventid',
+        workerFunction: mockBoundWorkerFunction,
+        preferredWorkerId: '1'
+      };
+
+      chai.expect(function(){
+        fhcluster(mockWorkerFunction, 2, [testBoundWorker]);
+      }).to.throw(/preferredWorkerId/);
+
+      done();
+    });
+
+    it('Assigning A Single Task Worker Preferred Worker Out Of Bounds', function(done){
+
+      var mockBoundWorkerFunction = sinon.spy();
+      var mockWorkerFunction = sinon.spy();
+      var testBoundWorker = {
+        startEventId: 'someeventid',
+        workerFunction: mockBoundWorkerFunction,
+        preferredWorkerId: 3
+      };
+
+      chai.expect(function(){
+        fhcluster(mockWorkerFunction, 2, [testBoundWorker]);
+      }).to.throw(/preferredWorkerId/);
+
+      done();
+    });
+
+    it('Assigning A Single Task Worker No Worker Function', function(done){
+
+      var mockWorkerFunction = sinon.spy();
+      var testBoundWorker = {
+        startEventId: 'someeventid',
+        preferredWorkerId: 1
+      };
+
+      chai.expect(function(){
+        fhcluster(mockWorkerFunction, 2, [testBoundWorker]);
+      }).to.throw(/workerFunction/);
+
+      done();
+    });
+
+    it('Assigning A Single Task Worker No Start Event Id', function(done){
+
+      var mockBoundWorkerFunction = sinon.spy();
+      var mockWorkerFunction = sinon.spy();
+      var testBoundWorker = {
+        startEventId: '',
+        workerFunction: mockBoundWorkerFunction,
+        preferredWorkerId: 1
+      };
+
+      chai.expect(function(){
+        fhcluster(mockWorkerFunction, 2, [testBoundWorker]);
+      }).to.throw(/startEventId/);
+
       done();
     });
   });
