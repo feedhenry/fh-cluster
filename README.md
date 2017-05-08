@@ -1,4 +1,4 @@
-## fh-cluster
+## fh-cluster 
 
 Wraps node cluster module to allow cleaner usage
 
