@@ -21,7 +21,7 @@
     "chai": "^3.5.0",
     "eslint": "^2.7.0",
     "grunt": "^1.0.1",
-    "grunt-fh-build": "^1.0.1",
+    "grunt-fh-build": "^2.0.0",
     "istanbul": "^0.4.3",
     "mocha": "^2.4.5",
     "proxyquire": "^1.7.4",
